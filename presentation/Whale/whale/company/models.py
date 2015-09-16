@@ -3,10 +3,14 @@ from mongoengine import *
 
 class Company(Document):
     code = StringField(unique=True, required=True)
-    name = StringField(required=True)
-    overview = StringField()
+    stockName = StringField(required=True)
+    name = StringField()
+    e_name = StringField()
     found_time = DateTimeField()
-
+    overview = StringField()
+    business ＝ StringField()
+    main_business = StringField()
+    industry = StringField()
 
 class Quote(Document):
     company = ReferenceField(Company)
