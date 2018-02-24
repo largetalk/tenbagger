@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load tz %}
+{% load static %}
+{% block script %}
+<link rel="stylesheet" href="{% static 'jalendar/documentation.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'jalendar/jalendar.css' %}" type="text/css" />
+<script type="text/javascript" src="{% static 'jalendar/jalendar.js' %}"></script>
+<script>
+    $( document ).ready(function() {
+    $('#myId3').jalendar({color: '#ed145a'});
+
+    });
+
+</script>
+{%  endblock %}
+{% block css %}
+
+
+{%  endblock %}
+
+{% block content %}
+
+<div class="span12">
+    <div class="row">
+    <div class="alert alert-info">
+    <h4>信用卡</h4>
+     </div>
+</div>
+
+<div class="row">
+
+<div id="myId3" class="jalendar mid">
+    {% for co in cashOut_list %}
+    <div class="added-event" data-date="{{ co.due_day|date:"j/n/Y" }}" data-time="8:00" data-title="Lorem ipsum dolor sit amet"></div>
+    {% endfor %}
+
+</div>
+
+
+</div>
+
+{% endblock %}
