@@ -1,0 +1,58 @@
+{% load bootstrap_toolkit  %}
+{% load staticfiles %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link type="text/css" href="{% static 'css/login.css' %}" rel="stylesheet">
+  <link type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  <script src="{{ STATIC_URL }}js/jquery-1.8.2.min.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery-ui.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery-ui-timepicker-addon.css" rel="stylesheet" />
+  <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+  <script src="{{ STATIC_URL }}js/common.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+  	$(":text").focus();
+  });
+  </script>
+  <title>GDCO Console</title>
+</head>
+<body>
+<div class="bg">
+<div class="login_k">
+<div class="container">
+<div class="span_login" style="margin-top:15px;margin-left:299px;">
+<form class="form-horizontal" method="post" style="margin-top:25%" action="{% url 'django.contrib.auth.views.login' %}">{% csrf_token %}
+  <fieldset>
+    {{  form|as_bootstrap  }}
+            {% if sdicts and sdicts.status == -2 %}
+            <div class="control-group error">
+    <p class="help-block">  用户或密码错误！</p>
+    </div>
+    {% endif  %}
+    <div class="control-group">
+      <div class="controls">
+          <input type="submit" class="btn btn-primary" value="登录">
+      </div>
+    </div>
+    </fieldset>
+</form>
+
+</div>
+</div>  </div>
+<div class="container" style="margin-top:10%">
+    <footer class="row">
+      <span class="span6" style="float:none">
+        © 2012 ATA 版权所有
+      </span>
+      <!--<span class="span6 pull-right" style="text-align:right">
+        Powered by <a href="https://www.djangoproject.com/" target="_blank">Django</a>
+      </span>-->
+    </footer>
+  </div> 
+</div>
+
+</body></html>

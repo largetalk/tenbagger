@@ -1,0 +1,108 @@
+{% load i18n %}
+{% load tz %}
+{% load static %}
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us" >
+    <head>
+        <link type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet" />
+  <link type="text/css" href="{% static 'bootstrap/css/bootstrap-responsive.css' %}" rel="stylesheet" />
+  <link href="{% static 'prettify/prettify.css' %}" type="text/css" rel="stylesheet" />
+  <style type="text/css">
+    body {
+        padding-top: 60px;
+    }
+    .img-rounded{
+        float:left;
+    }
+    input[type="checkbox"].check_all{
+        margin-bottom:3px;
+    }
+    input.search-query{
+        width:286px;
+    }
+    .table td,.table th{
+        text-align:center;
+    }
+    ul.pagination{
+        padding-top:30px;
+        list-style-type:none; margin:0;
+        float : right;
+    }
+    ul.pagination li{
+         width:20px; float:left;
+    }
+
+  </style>
+  <link type="text/css" href="{% static 'css/jquery-ui.css' %}" rel="stylesheet" />
+  <link type="text/css" href="{% static 'css/jquery-ui-timepicker-addon.css' %}" rel="stylesheet" />
+
+  <script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script src="{% static 'js/jquery-ui-timepicker-cn.js' %}"></script>
+  <script src="{% static 'js/jquery-ui-timepicker-addon.js' %}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+  <script src="{% static 'bootstrap/js/bootbox.js' %}"></script>
+  <script src="{% static 'js/common.js' %}"></script>
+  <script type="text/javascript" src="{% static 'prettify/prettify.js' %}"></script></script>
+
+  {% block script  %}
+  {% endblock  %}
+  {% block css  %}
+  {% endblock  %}
+
+  <title>Refactor</title>
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+
+  {% block nav_menu %}
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        
+        <a class="brand" href="">Refactor</a>
+        <ul class="nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">信用卡<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                  <li><a href="/cc/">卡片</a></li>
+                  <li><a href="/cc/co/">历史</a></li>
+              </ul>
+            </li>
+       </ul>
+
+	<ul class="nav pull-right">
+	  <li class="dropdown">
+	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{request.user}} <b class="caret"></b></a>
+	    <ul class="dropdown-menu">
+            <li><a href="">退出登录</a></li>
+	    </ul>
+	  </li>
+    </ul>
+    {% block set_timezone %}
+ 
+
+  {% endblock %}
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+  <div class="container">
+
+      {% block content %}{% endblock %}
+
+  </div>
+  <hr>
+  <div class="container">
+    <footer class="row">
+      <span class="span6" style="float:none">
+    &copy; 2018  版权所有
+      </span>
+    </footer>
+  </div>
+</body>
