@@ -13,7 +13,8 @@ class PosAdmin(admin.ModelAdmin):
         list_display = ('id', 'rate')
 
 class CashOutAdmin(admin.ModelAdmin):
-        list_display = ('card', 'swipe_day', 'amount', 'due_day', 'isRepaid')
+        fields = ['card', 'swipe_day', 'amount', 'pos_rate']
+        list_display = ('card', 'swipe_day', 'amount', 'fee', 'due_day', 'isRepaid')
 
 admin.site.register(CreditCard, CreditCardAdmin)
 admin.site.register(Pos, PosAdmin)

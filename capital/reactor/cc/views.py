@@ -17,3 +17,6 @@ def card_list(request):
     except EmptyPage:
         card_list = paginator.get_page(paginator.num_pages)
     return render(request, 'card.html', locals())
+
+def swipe_card(request, card_id):
+    pass
