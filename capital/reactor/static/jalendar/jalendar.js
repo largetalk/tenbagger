@@ -11,6 +11,8 @@ $(function () {
             var settings = $.extend({
                 customDay: new Date(),
                 color: '#65c2c0',
+                selected_color: '#65c2c0',
+                today_color: '#14ede8',
                 lang: 'EN'
             }, options);
             
@@ -156,7 +158,7 @@ $(function () {
                     $this.find('.day').eq(startDay-1).addClass('this-month').attr('data-date', i+'/'+(month+1)+'/'+year).html(i);
                 }
                 if ( month == d.getMonth() ) {
-                    $this.find('.day.this-month').removeClass('today').eq(date-1).addClass('today').css('color', settings.color);
+                    $this.find('.day.this-month').removeClass('today').eq(date-1).addClass('today').css('color', settings.today_color);
                 } else {
                     $this.find('.day.this-month').removeClass('today').attr('style', '');
                 }
@@ -212,7 +214,7 @@ $(function () {
             
             function prevAddEvent() {
                 $this.find('.day').removeClass('selected').removeAttr('style');
-                $this.find('.today').css('color', settings.color);
+                $this.find('.today').css('color', settings.today_color);
                 $this.find('.add-event').hide();
                 $this.children('.jalendar-wood').animate({'width' : jalendarWoodW}, 200);
                 $this.children('.wood-bottom').animate({'width' : woodBottomW}, 200);
@@ -245,7 +247,7 @@ $(function () {
                 var eventSingle = $(this).find('.event-single')
                 $this.find('.events .event-single').remove();
                 prevAddEvent();
-                $(this).addClass('selected').css({'background-color': settings.color});
+                $(this).addClass('selected').css({'background-color': settings.selected_color});
                 $this.children('.jalendar-wood, .wood-bottom').animate({width : '+=300px' }, 200, function() {
                     $this.find('.add-event').show().find('.events-list').html(eventSingle.clone())
                     $this.find('.add-new input').select();
