@@ -160,7 +160,8 @@ $(function () {
                 } else {
                     $this.find('.day.this-month').removeClass('today').attr('style', '');
                 }
-                
+                $this.find('.day.this-month').removeClass('have-event');
+
                 // added event
                 $this.find('.added-event').each(function(i){
                     $(this).attr('data-id', i);
