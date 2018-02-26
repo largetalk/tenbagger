@@ -32,7 +32,7 @@
 
 <div id="myId3" class="jalendar mid">
     {% for co in cashOut_list %}
-    <div class="added-event" data-date="{{ co.due_day|date:"j/n/Y" }}" data-time="8:00" data-title="Lorem ipsum dolor sit amet"></div>
+    <div class="added-event" data-date="{{ co.due_day|date:"j/n/Y" }}" data-time="8:00" data-title="{{ co }}"></div>
     {% endfor %}
 
 </div>

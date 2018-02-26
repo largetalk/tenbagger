@@ -27,7 +27,23 @@ def swipe_card(request, card_id):
 def calendar(request):
     now = date.today()
     _b = date(now.year, now.month, 1)
-    _e = _b + timedelta(31)
+    _e = _b + timedelta(61)
     cashOut_list = CashOut.objects.filter(due_day__gt=_b, due_day__lt=_e)
 
     return render(request, 'calendar.html', locals())
+
+def stats(request):
+    cards = CreditCard.objects.all()
+    stats_list = []
+    total_unpay_count = 0
+    total_unpay_amount = 0
+    overdue = False
+    for card in cards:
+        info = card.stats
+        stats_list.append(info)
+        total_unpay_count +=  info['unpay_count']
+        total_unpay_amount += info['unpay_amount']
+        if info['overdue']:
+            overdue = True
+
+    return render(request, 'stats.html', locals())

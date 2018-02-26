@@ -21,4 +21,5 @@ urlpatterns = [
     path('card/', views.card_list, name='card_list'),
     path('swipe/<int:card_id>/', views.swipe_card, name='swipe_card'),
     path('calendar/', views.calendar, name='calendar'),
+    path('stats/', views.stats, name='stats'),
 ]

@@ -161,6 +161,9 @@
     cursor: pointer;
     position: relative;
 }
+.jalendar .days .have-event {
+    color: red;
+}
 .jalendar.mid .days .day {
     height: 40px;
     font-size: 18px;

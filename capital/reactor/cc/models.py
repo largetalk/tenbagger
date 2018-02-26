@@ -18,6 +18,18 @@ class CreditCard(BaseModel):
 
     def __str__(self):
         return '%s(%s)' % (self.name, self.tail_no)
+    
+    @property
+    def stats(self):
+        co_list = CashOut.objects.filter(card=self, isRepaid=False).order_by("due_day")
+        unpay_count = co_list.count()
+        unpay_amount = sum([x.amount for x in co_list])
+        oldest_day = None
+        if unpay_count > 0:
+            oldest_day = co_list[0].due_day
+        now = date.today()
+        overdue = any([ now > co.due_day for co in co_list])
+        return {'unpay_count': unpay_count, 'unpay_amount': unpay_amount, 'oldest': oldest_day, 'overdue': overdue, 'name': str(self)}
 
 
     def find_next_due_day(self, day=date.today):
@@ -55,6 +67,8 @@ class CashOut(BaseModel):
     pay_day = models.DateField(null=True, blank=True) #实际还款日
     apr = models.FloatField(null=True, blank=True) #年利率
 
+    def __str__(self):
+        return '%s/%s' % (self.amount, self.card)
 
     def save(self, *args, **kwargs):
         if self.pk is None:

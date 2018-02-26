@@ -27,7 +27,7 @@ $(function () {
             monthNames['EN'] = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'); 
             monthNames['TR'] = new Array('Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'); 
             monthNames['ES'] = new Array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'); 
-            lAddEvent['EN'] = 'Add New Event';
+            lAddEvent['EN'] = 'Swipe Card';
             lAddEvent['TR'] = 'Yeni Etkinlik Ekle';
             lAddEvent['ES'] = 'Agregar Un Nuevo Evento';
             lAllDay['EN'] = 'All Day';
