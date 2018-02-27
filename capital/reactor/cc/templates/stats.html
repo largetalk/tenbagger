@@ -38,6 +38,7 @@
             <th>卡名</th>
             <th>未还笔数</th>
             <th>未还金额</th>
+            <th>可用额度</th>
             <th>最近还款日</th>
             <th>有逾期</th>
         </tr>
@@ -48,6 +49,7 @@
       <td>{{ stats|key:"name" }}</td>
       <td>{{ stats|key:"unpay_count" }}</td>
       <td>{{ stats|key:"unpay_amount" }}</td>
+      <td>{{ stats|key:"available_line" }}</td>
       <td>{{ stats|key:"oldest" }}</td>
       <td>{{ stats|key:"overdue" }}</td>
     </tr>
@@ -56,6 +58,7 @@
       <td>总计</td>
       <td>{{ total_unpay_count }}</td>
       <td>{{ total_unpay_amount }}</td>
+      <td>{{ total_available_line }}</td>
       <td></td>
       <td>{{ overdue }}</td>
   </tr>

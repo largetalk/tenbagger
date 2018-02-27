@@ -11,6 +11,7 @@ _CARD_TYPE_CHOICES = ((_DUE_DAY_PAY, '指定还款日'), (_DUE_PERIOD_PAY, '定�
 class CreditCard(BaseModel):
     name = models.CharField(max_length=100)
     tail_no = models.IntegerField()
+    lines = models.PositiveIntegerField(default=0, help_text="额度")
     bill_day = models.PositiveSmallIntegerField()
     card_type = models.CharField(max_length = 5, choices=_CARD_TYPE_CHOICES, default=_DUE_DAY_PAY)
     due_day = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -29,7 +30,12 @@ class CreditCard(BaseModel):
             oldest_day = co_list[0].due_day
         now = date.today()
         overdue = any([ now > co.due_day for co in co_list])
-        return {'unpay_count': unpay_count, 'unpay_amount': unpay_amount, 'oldest': oldest_day, 'overdue': overdue, 'name': str(self)}
+        return {'unpay_count': unpay_count,
+                'unpay_amount': unpay_amount,
+                'available_line': self.lines - unpay_amount,
+                'oldest': oldest_day,
+                'overdue': overdue,
+                'name': str(self)}
 
 
     def find_next_due_day(self, day=date.today):

@@ -37,12 +37,14 @@ def stats(request):
     stats_list = []
     total_unpay_count = 0
     total_unpay_amount = 0
+    total_available_line = 0
     overdue = False
     for card in cards:
         info = card.stats
         stats_list.append(info)
         total_unpay_count +=  info['unpay_count']
         total_unpay_amount += info['unpay_amount']
+        total_available_line += info['available_line']
         if info['overdue']:
             overdue = True
 

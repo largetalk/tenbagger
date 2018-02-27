@@ -6,7 +6,7 @@ from .models import CashOut
 
 
 class CreditCardAdmin(admin.ModelAdmin):
-        list_display = ('name', 'tail_no', 'bill_day', 'card_type', 'due_day', 'due_period')
+        list_display = ('name', 'tail_no', 'lines', 'bill_day', 'card_type', 'due_day', 'due_period')
 
 class PosAdmin(admin.ModelAdmin):
         fields = ['rate']
