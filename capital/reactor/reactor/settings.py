@@ -78,8 +78,14 @@ WSGI_APPLICATION = 'reactor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '_dbs/db.sqlite3'),
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, '_dbs/db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'refactor',
+        'USER': 'refactor',
+        'PASSWORD': 'refactor',
+        'HOST': '121.199.4.41',
+        'PORT': '3306',
     }
 }
 
