@@ -56,15 +56,5 @@
   </tbody>
 </table>
 </div>
-<div class="row">
-    <span class="pull-right" style="padding-top:30px">共{{ total }}条记录
-    </span>
-        <form class="form-search pull-right" style="padding-top:25px;padding-right:10px" action="{% url 'card_list' %}" method="GET">
-            {%  csrf_token %}
-            <input type="text" name="page" style="width:35px">
-            <button type="submit" class="btn btn-small">Go</button>
-        </form>
-        {% bootstrap_paginate card_list range=10 show_prev_next="true" show_first_last="true" %}
-</div>
 
 {% endblock %}
