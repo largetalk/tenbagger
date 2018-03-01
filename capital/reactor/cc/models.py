@@ -30,12 +30,15 @@ class CreditCard(BaseModel):
             oldest_day = co_list[0].due_day
         now = date.today()
         overdue = any([ now > co.due_day for co in co_list])
-        return {'unpay_count': unpay_count,
-                'unpay_amount': unpay_amount,
-                'available_line': self.lines - unpay_amount,
-                'oldest': oldest_day,
-                'overdue': overdue,
-                'name': str(self)}
+        return {
+            'swipe_count': CashOut.objects.filter(card=self).count(),
+            'unpay_count': unpay_count,
+            'unpay_amount': unpay_amount,
+            'available_line': self.lines - unpay_amount,
+            'oldest': oldest_day,
+            'overdue': overdue,
+            'name': str(self)
+        }
 
 
     def find_next_due_day(self, day=date.today):

@@ -47,6 +47,7 @@
     {% for stats in stats_list %}
     <tr>
       <td>{{ stats|key:"name" }}</td>
+      <td>{{ stats|key:"swipe_count" }}</td>
       <td>{{ stats|key:"unpay_count" }}</td>
       <td>{{ stats|key:"unpay_amount" }}</td>
       <td>{{ stats|key:"available_line" }}</td>
@@ -56,6 +57,7 @@
   {% endfor%}
   <tr>
       <td>总计</td>
+      <td>{{ total_swipe_count }}</td>
       <td>{{ total_unpay_count }}</td>
       <td>{{ total_unpay_amount }}</td>
       <td>{{ total_available_line }}</td>
