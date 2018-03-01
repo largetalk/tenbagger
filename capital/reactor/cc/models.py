@@ -19,6 +19,10 @@ class CreditCard(BaseModel):
 
     def __str__(self):
         return '%s(%s)' % (self.name, self.tail_no)
+
+    @property
+    def unpay_count(self):
+        return CashOut.objects.filter(card=self, isRepaid=False).count()
     
     @property
     def stats(self):
