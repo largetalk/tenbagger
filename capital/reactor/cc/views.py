@@ -49,3 +49,9 @@ def stats(request):
             overdue = True
 
     return render(request, 'stats.html', locals())
+
+def card_co(request, card_id):
+    card = CreditCard.objects.get(pk=card_id)
+    co_list = CashOut.objects.filter(card=card, isRepaid=False)
+    
+    return render(request, 'card_co.html', locals())

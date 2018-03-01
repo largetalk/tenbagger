@@ -50,7 +50,7 @@
       <td>{{ stats|key:"unpay_count" }}</td>
       <td>{{ stats|key:"unpay_amount" }}</td>
       <td>{{ stats|key:"available_line" }}</td>
-      <td>{{ stats|key:"oldest" }}</td>
+      <td>{{ stats|key:"oldest"|date:"Y-m-d" }}</td>
       <td>{{ stats|key:"overdue" }}</td>
     </tr>
   {% endfor%}
