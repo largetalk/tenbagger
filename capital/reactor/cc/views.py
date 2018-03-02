@@ -31,7 +31,7 @@ def calendar(request):
     now = date.today()
     _b = date(now.year, now.month, 1)
     _e = _b + timedelta(61)
-    cashOut_list = CashOut.objects.filter(due_day__gt=_b, due_day__lt=_e)
+    cashOut_list = CashOut.objects.filter(isRepaid=False, due_day__gt=_b, due_day__lt=_e)
 
     return render(request, 'calendar.html', locals())
 
