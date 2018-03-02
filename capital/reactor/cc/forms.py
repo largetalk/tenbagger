@@ -30,6 +30,7 @@ class CashPayForm(forms.Form):
         if self.co:
             data = self.cleaned_data
             self.co.pay_day = data['pay_day']
+            self.co.isRepaid = True
             delta = self.co.pay_day - self.co.swipe_day
             if delta.days > 2:
                 self.co.apr = (self.co.fee * 365 * 100) / (delta.days - 2) / self.co.amount
