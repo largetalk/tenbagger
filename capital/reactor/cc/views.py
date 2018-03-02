@@ -1,5 +1,6 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
+from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import date
 from datetime import timedelta
@@ -65,5 +66,5 @@ def cash_pay(request, co_id):
         if form.is_valid():
             form.save()
         return HttpResponse(dumps({'status':0}), "text/application")
-    return render(request, 'cash_pay_form.tpl', locals())
-    #return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))
+    #return render(request, 'cash_pay_form.tpl', locals())
+    return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))
