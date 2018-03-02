@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import date
 from datetime import timedelta
+from json import dumps
 
 from .models import CreditCard
 from .models import CashOut
@@ -67,4 +68,3 @@ def cash_pay(request, co_id):
             form.save()
         return HttpResponse(dumps({'status':0}), "text/application")
     return render(request, 'cash_pay_form.tpl', {'form': form})
-    #return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))

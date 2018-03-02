@@ -1,6 +1,7 @@
 #coding=utf-8
 from django import forms
 from django.forms import ValidationError
+from datetime import date
 
 from .models import CashOut
 
@@ -8,7 +9,7 @@ from .models import CashOut
 class CashPayForm(forms.Form):
     amount = forms.DecimalField(label=u'金额')
     due_day = forms.DateField(label=u'到期日')
-    pay_day = forms.DateField(label=u'还款日', required=True, widget=forms.SelectDateWidget())
+    pay_day = forms.DateField(label=u'还款日', required=True)
 
     def __init__(self,*args,**kwargs):
         super(CashPayForm, self).__init__(*args, **kwargs)
@@ -21,17 +22,18 @@ class CashPayForm(forms.Form):
                 self.fields['amount'].widget.attrs['readonly'] = True
                 self.fields['due_day'].initial = self.co.due_day
                 self.fields['due_day'].widget.attrs['readonly'] = True
+                self.fields['pay_day'].initial = date.today()
         else:
             self.co = None
 
     def save(self):
-        pass
-        #data = self.cleaned_data
-        #if self.case:
-        #    self.case.name = data['name']
-        #    self.case.cp = data['cp']
-        #    self.case.save()
-        #else:
-        #    case = Case(name=data['name'], cp=data['cp'])
-        #    case.save()
+        if self.co:
+            data = self.cleaned_data
+            self.co.pay_day = data['pay_day']
+            delta = self.co.pay_day - self.co.swipe_day
+            if delta.days > 2:
+                self.co.apr = (self.co.fee * 365 * 100) / (delta.days - 2) / self.co.amount
+            else:
+                self.co.apr = 1000
+            self.co.save()
 
