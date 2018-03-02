@@ -65,4 +65,5 @@ def cash_pay(request, co_id):
         if form.is_valid():
             form.save()
         return HttpResponse(dumps({'status':0}), "text/application")
-    return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))
+    return render(request, 'cash_pay_form.tpl', locals())
+    #return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))
