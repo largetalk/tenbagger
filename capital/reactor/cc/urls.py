@@ -23,5 +23,5 @@ urlpatterns = [
     path('calendar/', views.calendar, name='calendar'),
     path('stats/', views.stats, name='stats'),
     path('co/<int:card_id>/', views.card_co, name='card_co'),
-    #path('co/pay/<int:co_id>/', views.cash_pay, name='cash_pay'),
+    path('co/pay/<int:co_id>/', views.cash_pay, name='cash_pay'),
 ]

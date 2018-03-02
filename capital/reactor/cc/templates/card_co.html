@@ -2,10 +2,35 @@
 {% load bootstrap_pagination %}
 {% block script %}
 <script>
-    $( document ).ready(function() {
+  $( document ).ready(function() {
 
+   $('.cash_pay_button').click(function(event){
+    event.preventDefault();
+    $('#updateCaseModal').removeData("modal");
+
+    $('#updateCaseForm').attr("action", $(this).attr("rel"));
+    $('#updateCaseModal').modal({backdrop: 'static', remote: $(this).attr("rel")});
+  });
+
+
+
+   $("#updateCaseForm").submit(function(){
+    $.ajax({
+      type: "POST",
+      url: $(this).attr("action"),
+      data: $(this).serialize(),
+      success: function(data) {
+        if (data.length < 20) {
+          window.location.replace("{% url 'card_list' %}");
+        } else {
+          $("#updateCaseModal .modal-body").html(data);
+        }
+      }
     });
-
+    return false;
+  });
+   
+ });
 </script>
 {%  endblock %}
 {% block css %}
@@ -49,12 +74,28 @@
       <td>{{ co.fee }}</td>
       <td>{{ co.due_day|date:"Y-m-d" }}</td>
       <td>
-          <a class="btn btn-info btn-small update-case-progress" rel="" data-toggle="modal" href="#" title="刷卡" alt='编辑'><i class="icon-edit icon-white"></i></a>
+          <a class="btn btn-info btn-small cash_pay_button" rel="{% url 'cash_pay' co.id|escape %}" data-toggle="modal" href="#" title="刷卡" alt='编辑'><i class="icon-edit icon-white"></i></a>
       </td>
     </tr>
   {% endfor%}
   </tbody>
 </table>
+</div>
+
+<div id="updateCaseModal" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Update 案例</h3>
+    </div>
+    <form id="updateCaseForm" action="" method="POST" class="form-horizontal">
+    <div class="modal-body">
+        loading....
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn">Close</button>
+        <button type="submit" class="btn btn-primary">update</button>
+    </div>
+</form>
 </div>
 
 {% endblock %}

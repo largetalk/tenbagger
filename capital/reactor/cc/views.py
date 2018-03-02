@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import date
@@ -6,6 +6,7 @@ from datetime import timedelta
 
 from .models import CreditCard
 from .models import CashOut
+from .forms import CashPayForm
 
 
 def card_list(request):
@@ -57,3 +58,11 @@ def card_co(request, card_id):
     co_list = CashOut.objects.filter(card=card, isRepaid=False)
     
     return render(request, 'card_co.html', locals())
+
+def cash_pay(request, co_id):
+    form = CashPayForm(request.POST or None,initial={'co_id':co_id or None})
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+        return HttpResponse(dumps({'status':0}), "text/application")
+    return render_to_response('cash_pay_form.tpl',locals(),context_instance=RequestContext(request))
