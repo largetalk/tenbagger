@@ -1,4 +1,4 @@
-{% load bootstrap_toolkit  %}
+{% load bootstrap3  %}
 
 {% csrf_token %}
-{{  form|as_bootstrap  }}
+{% bootstrap_form form %}
