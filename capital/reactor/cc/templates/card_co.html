@@ -21,7 +21,7 @@
       data: $(this).serialize(),
       success: function(data) {
         if (data.length < 20) {
-          window.location.replace("{% url 'card_list' %}");
+          window.location.reload();
         } else {
           $("#CashPayModal .modal-body").html(data);
         }

@@ -14,7 +14,7 @@ class CashPayForm(forms.Form):
         super(CashPayForm, self).__init__(*args, **kwargs)
 
         co_id = self.initial.get('co_id')
-        if cid:
+        if co_id:
             self.co = CashOut.objects.filter(pk=co_id).first()
             if self.co:
                 self.fields['amount'].initial = self.co.amount
@@ -22,7 +22,7 @@ class CashPayForm(forms.Form):
                 self.fields['due_day'].initial = self.co.due_day
                 self.fields['due_day'].widget.attrs['readonly'] = True
         else:
-            self.case = None
+            self.co = None
 
     def save(self):
         pass
