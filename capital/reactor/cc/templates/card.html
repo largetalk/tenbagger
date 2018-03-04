@@ -35,6 +35,7 @@
     <thead>
         <tr>
             <th>卡名</th>
+            <th>额度</th>
             <th>账单日</th>
             <th>账单类型</th>
             <th>还款日/周期</th>
@@ -46,6 +47,7 @@
     {% for card in card_list %}
     <tr>
       <td><a href="{% url 'card_co' card.pk %}">{{ card.name }}({{ card.tail_no}})</a></td>
+      <td>{{ card.lines }}</td>
       <td>{{ card.bill_day }}</td>
       <td>{{ card.card_type }}</td>
       <td>{{ card.due_day }}/{{ card.due_period }}</td>
