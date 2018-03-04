@@ -46,7 +46,7 @@ def stats(request):
     for card in cards:
         info = card.stats
         stats_list.append(info)
-        total_swipe_count = info['swipe_count']
+        total_swipe_count += info['swipe_count']
         total_unpay_count +=  info['unpay_count']
         total_unpay_amount += info['unpay_amount']
         total_available_line += info['available_line']
