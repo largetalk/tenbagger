@@ -2,6 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 from datetime import date
 from datetime import timedelta
 from json import dumps
@@ -11,6 +12,7 @@ from .models import CashOut
 from .forms import CashPayForm
 
 
+@login_required
 def card_list(request):
     cards = CreditCard.objects.all()
     total = cards.count()
@@ -55,12 +57,14 @@ def stats(request):
 
     return render(request, 'stats.html', locals())
 
+@login_required
 def card_co(request, card_id):
     card = CreditCard.objects.get(pk=card_id)
     co_list = CashOut.objects.filter(card=card, isRepaid=False)
     
     return render(request, 'card_co.html', locals())
 
+@login_required
 def cash_pay(request, co_id):
     form = CashPayForm(request.POST or None,initial={'co_id':co_id or None})
     if request.method == "POST":
