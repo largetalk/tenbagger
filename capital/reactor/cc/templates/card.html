@@ -38,8 +38,9 @@
             <th>额度</th>
             <th>账单日</th>
             <th>账单类型</th>
-            <th>还款日/周期</th>
+            <!--<th>还款日/周期</th>-->
             <th>未还笔数</th>
+            <th>总手续费</th>
             <th style="width:100px">编辑 </th>
         </tr>
   </thead>
@@ -50,8 +51,9 @@
       <td>{{ card.lines }}</td>
       <td>{{ card.bill_day }}</td>
       <td>{{ card.card_type }}</td>
-      <td>{{ card.due_day }}/{{ card.due_period }}</td>
+      <!--<td>{{ card.due_day }}/{{ card.due_period }}</td>-->
       <td>{{ card.unpay_count }}</td>
+      <td>{{ card.total_fee }}</th>
       <td>
           <a class="btn btn-info btn-small update-case-progress" rel="" data-toggle="modal" href="#" title="刷卡" alt='编辑'><i class="icon-edit icon-white"></i></a>
       </td>
