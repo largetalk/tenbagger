@@ -10,7 +10,7 @@ _DUE_PERIOD_PAY = 'B'
 _CARD_TYPE_CHOICES = ((_DUE_DAY_PAY, '指定还款日'), (_DUE_PERIOD_PAY, '定长还款期'))
 class CreditCard(BaseModel):
     name = models.CharField(max_length=100)
-    tail_no = models.IntegerField()
+    tail_no = models.CharField(max_length=10)
     lines = models.PositiveIntegerField(default=0, help_text="额度")
     bill_day = models.PositiveSmallIntegerField()
     card_type = models.CharField(max_length = 5, choices=_CARD_TYPE_CHOICES, default=_DUE_DAY_PAY)
