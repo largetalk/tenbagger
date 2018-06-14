@@ -94,3 +94,12 @@ class CashOut(BaseModel):
 
         super().save(*args, **kwargs)
 
+_LOANS_TYPE = (('EPI', '等额本息'), ('EP', '等额本金'))
+class Loans(BaseModel):
+    bank = models.CharField(max_length=100)
+    loan_day = models.DateField(default=date.today, help_text='借款日')
+    amount = models.DecimalField(max_digits=11, decimal_places=2, help_text='金额')
+    loan_type = models.CharField(max_length = 5, choices=_LOANS_TYPE, default='EPI')
+    due_day = models.DateField(help_text='到期日')
+    apr = models.FloatField(null=True, blank=True) #年利率
+
