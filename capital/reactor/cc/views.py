@@ -9,6 +9,7 @@ from json import dumps
 
 from .models import CreditCard
 from .models import CashOut
+from .models import Loans
 from .forms import CashPayForm
 
 
@@ -72,3 +73,17 @@ def cash_pay(request, co_id):
             form.save()
         return HttpResponse(dumps({'status':0}), "text/application")
     return render(request, 'cash_pay_form.tpl', {'form': form})
+
+@login_required
+def loans(request):
+    loans = Loans.objects.all()
+    total = loans.count()
+    paginator = Paginator(loans, 20)
+    page = request.GET.get('page')
+    try:
+        loan_list = paginator.get_page(page)
+    except PageNotAnInteger:
+        loan_list = paginator.get_page(1)
+    except EmptyPage:
+        loan_list = paginator.get_page(paginator.num_pages)
+    return render(request, 'loans.html', locals())

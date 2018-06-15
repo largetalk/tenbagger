@@ -22,6 +22,7 @@ urlpatterns = [
     #path('swipe/<int:card_id>/', views.swipe_card, name='swipe_card'),
     path('calendar/', views.calendar, name='calendar'),
     path('stats/', views.stats, name='stats'),
+    path('loans/', views.loans, name='loans'),
     path('co/<int:card_id>/', views.card_co, name='card_co'),
     path('co/pay/<int:co_id>/', views.cash_pay, name='cash_pay'),
 ]

@@ -18,8 +18,8 @@ class CashOutAdmin(admin.ModelAdmin):
         list_display = ('card', 'swipe_day', 'amount', 'fee', 'due_day', 'isRepaid', 'pay_day', 'apr')
 
 class LoansAdmin(admin.ModelAdmin):
-        fields = ['bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'apr']
-        list_display = ('bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'apr')
+        fields = ['bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'debit_day', 'apr']
+        list_display = ('bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'debit_day', 'apr')
 
 
 admin.site.register(CreditCard, CreditCardAdmin)
