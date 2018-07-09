@@ -104,8 +104,42 @@ class Loans(BaseModel):
     due_day = models.DateField(help_text='到期日')
     debit_day = models.PositiveSmallIntegerField(null=True, blank=True)
     apr = models.FloatField(null=True, blank=True) #年利率
+    isRepaid = models.BooleanField(default=False)
 
     @property
     def loan_type_show(self):
         return _LOANS_TYPE_DIC[self.loan_type]
+
+class Installment(BaseModel):
+    cashOut = models.ForeignKey(CashOut, models.SET_NULL, blank=True, null=True)
+    loan = models.ForeignKey(Loans, models.SET_NULL, blank=True, null=True)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, help_text='金额')
+    stage_count = models.PositiveSmallIntegerField(help_text="分期期数")
+    charge_rate = models.FloatField(null=True, blank=True, default=0.35) #for cashOut
+    lend_rate = models.FloatField(null=True, blank=True) #for loans
+    first_repay_day = models.DateField(help_text="第一次还款日")
+    balance = models.DecimalField(max_digits=11, decimal_places=2, help_text='余额')
+
+    @property
+    def name(self):
+        if self.loan:
+            return self.loan.name
+        if self.cashOut:
+            return self.cashOut.card.name
+        return 'null'
+
+    @property
+    def rate(self):
+        if self.lend_rate:
+            return self.lend_rate
+        if self.charge_rate:
+            return self.charge_rate
+        return '100'
+
+class Staging(BaseModel):
+    installment = models.ForeignKey(Installment, on_delete=models.CASCADE)
+    no = models.PositiveSmallIntegerField(help_text='第几期')
+    pay_amount = models.DecimalField(max_digits=11, decimal_places=2, help_text='金额')
+    pay_day = models.DateField(help_text='还款日')
+    isRepaid = models.BooleanField(default=False)
 

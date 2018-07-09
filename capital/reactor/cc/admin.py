@@ -4,6 +4,7 @@ from .models import CreditCard
 from .models import Pos
 from .models import CashOut
 from .models import Loans
+from .models import Installment
 
 
 class CreditCardAdmin(admin.ModelAdmin):
@@ -21,8 +22,12 @@ class LoansAdmin(admin.ModelAdmin):
         fields = ['bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'debit_day', 'apr']
         list_display = ('bank', 'loan_day', 'amount', 'loan_type', 'due_day', 'debit_day', 'apr')
 
+class InstallmentAdmin(admin.ModelAdmin):
+        fields = ['cashOut', 'loan', 'amount', 'stage_count', 'charge_rate', 'lend_rate', 'first_repay_day']
+        list_display = ('name', 'amount', 'stage_count', 'rate', 'first_repay_day', 'balance')
 
 admin.site.register(CreditCard, CreditCardAdmin)
 admin.site.register(Pos, PosAdmin)
 admin.site.register(CashOut, CashOutAdmin)
 admin.site.register(Loans, LoansAdmin)
+admin.site.register(Installment, InstallmentAdmin)
