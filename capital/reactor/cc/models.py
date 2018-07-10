@@ -106,6 +106,9 @@ class Loans(BaseModel):
     apr = models.FloatField(null=True, blank=True) #年利率
     isRepaid = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '%s(%s)' % (self.bank, self.amount)
+
     @property
     def loan_type_show(self):
         return _LOANS_TYPE_DIC[self.loan_type]
@@ -119,11 +122,18 @@ class Installment(BaseModel):
     lend_rate = models.FloatField(null=True, blank=True) #for loans
     first_repay_day = models.DateField(help_text="第一次还款日")
     balance = models.DecimalField(max_digits=11, decimal_places=2, help_text='余额')
+    
+    def __str__(self):
+        if self.loan:
+            return str(self.loan)
+        if self.cashOut:
+            return str(self.cashOut)
+        return 'null'
 
     @property
     def name(self):
         if self.loan:
-            return self.loan.name
+            return self.loan.bank
         if self.cashOut:
             return self.cashOut.card.name
         return 'null'
@@ -135,6 +145,11 @@ class Installment(BaseModel):
         if self.charge_rate:
             return self.charge_rate
         return '100'
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.balance = self.amount
+        super().save(*args, **kwargs)
 
 class Staging(BaseModel):
     installment = models.ForeignKey(Installment, on_delete=models.CASCADE)
