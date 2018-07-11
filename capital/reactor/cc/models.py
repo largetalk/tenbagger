@@ -154,7 +154,13 @@ class Installment(BaseModel):
 class Staging(BaseModel):
     installment = models.ForeignKey(Installment, on_delete=models.CASCADE)
     no = models.PositiveSmallIntegerField(help_text='第几期')
+    principal = models.DecimalField(max_digits=11, decimal_places=2, help_text='本金')
     pay_amount = models.DecimalField(max_digits=11, decimal_places=2, help_text='金额')
     pay_day = models.DateField(help_text='还款日')
     isRepaid = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if self.isRepaid:
+            self.installment.balance -= self.principal
+            self.installment.save()
+        super().save(*args, **kwargs)
