@@ -179,6 +179,9 @@ class Staging(BaseModel):
     pay_day = models.DateField(help_text='还款日')
     isRepaid = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '%s_%s(%s)' % (self.installment.name, self.pay_amount, self.no)
+
     def save(self, *args, **kwargs):
         if self.isRepaid and self.pk:
             orig = Staging.objects.get(pk=self.pk)

@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load tz %}
 {% load static %}
+{% load cc_extras %}
 {% block script %}
 <link rel="stylesheet" href="{% static 'jalendar/documentation.css' %}" type="text/css" />
 <link rel="stylesheet" href="{% static 'jalendar/jalendar.css' %}" type="text/css" />
@@ -31,8 +32,8 @@
 <div class="row">
 
 <div id="myId3" class="jalendar mid">
-    {% for co in cashOut_list %}
-    <div class="added-event" data-date="{{ co.due_day|date:"j/n/Y" }}" data-time="8:00" data-title="{{ co }}"></div>
+    {% for debt in debt_list %}
+    <div class="added-event" data-date="{{ debt|key:'day'|date:'j/n/Y' }}" data-time="8:00" data-title="{{ debt|key:'name' }}"></div>
     {% endfor %}
 
 </div>
