@@ -28,7 +28,7 @@ class InstallmentAdmin(admin.ModelAdmin):
         list_display = ('name', 'amount', 'stage_count', 'rate', 'first_repay_day', 'balance')
 
 class StagingAdmin(admin.ModelAdmin):
-        fields = ['no']
+        fields = ['no', 'principal']
         list_display = ('installment', 'no', 'pay_amount', 'pay_day', 'isRepaid')
 
 admin.site.register(CreditCard, CreditCardAdmin)

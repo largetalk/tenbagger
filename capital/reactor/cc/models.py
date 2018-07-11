@@ -23,16 +23,16 @@ class CreditCard(BaseModel):
     @property
     def unpay_count(self):
         return CashOut.objects.filter(card=self, isRepaid=False).count()
-    
+
     @property
     def total_fee(self):
         return sum([ x.fee for x in CashOut.objects.filter(card=self) ])
-    
+
     @property
     def stats(self):
         co_list = CashOut.objects.filter(card=self, isRepaid=False).order_by("due_day")
         unpay_count = co_list.count()
-        unpay_amount = sum([x.amount for x in co_list])
+        unpay_amount = sum([x.balance for x in co_list])
         oldest_day = None
         if unpay_count > 0:
             oldest_day = co_list[0].due_day
@@ -94,6 +94,19 @@ class CashOut(BaseModel):
 
         super().save(*args, **kwargs)
 
+    @property
+    def hasInstallment(self):
+        if self.installment_set.count() > 0:
+            return True
+        return False
+
+    @property
+    def balance(self):
+        installment = self.installment_set.first()
+        if installment:
+            return installment.balance
+        return self.amount
+
 _LOANS_TYPE = (('EPI', '等额本息'), ('EP', '等额本金'))
 _LOANS_TYPE_DIC = dict(_LOANS_TYPE)
 class Loans(BaseModel):
@@ -113,6 +126,13 @@ class Loans(BaseModel):
     def loan_type_show(self):
         return _LOANS_TYPE_DIC[self.loan_type]
 
+    @property
+    def balance(self):
+        installment = self.installment_set.first()
+        if installment:
+            return installment.balance
+        return self.amount
+
 class Installment(BaseModel):
     cashOut = models.ForeignKey(CashOut, models.SET_NULL, blank=True, null=True)
     loan = models.ForeignKey(Loans, models.SET_NULL, blank=True, null=True)
@@ -122,7 +142,7 @@ class Installment(BaseModel):
     lend_rate = models.FloatField(null=True, blank=True) #for loans
     first_repay_day = models.DateField(help_text="第一次还款日")
     balance = models.DecimalField(max_digits=11, decimal_places=2, help_text='余额')
-    
+
     def __str__(self):
         if self.loan:
             return str(self.loan)
@@ -160,7 +180,9 @@ class Staging(BaseModel):
     isRepaid = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.isRepaid:
-            self.installment.balance -= self.principal
-            self.installment.save()
+        if self.isRepaid and self.pk:
+            orig = Staging.objects.get(pk=self.pk)
+            if orig.isRepaid != self.isRepaid:
+                self.installment.balance -= self.principal
+                self.installment.save()
         super().save(*args, **kwargs)

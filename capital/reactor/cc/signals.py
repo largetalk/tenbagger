@@ -8,13 +8,22 @@ from .models import Staging
 @receiver(post_save, sender=Installment)
 def create_stagings(sender, instance, created, **kwargs):
     if not created:
+        if instance.balance < 10:
+            status = [ s[0] for s in instance.staging_set.values_list('isRepaid') ]
+            if all(status):
+                if instance.cashOut:
+                    instance.cashOut.isRepaid = True
+                    instance.cashOut.save()
+                if instance.loan:
+                    instance.loan.isRepaid = True
+                    instance.loan.save()
         return
     amount = instance.amount
     count = instance.stage_count
     fDay = instance.first_repay_day
     principal = amount / count
     if instance.cashOut:
-        pay_amount = float(amount / count) + (amount * instance.charge_rate /100)
+        pay_amount = float(amount / count) + (float(amount) * instance.charge_rate /100)
         for i in range(count):
             stags = Staging(installment=instance, no=i+1, principal=principal, pay_amount=pay_amount, pay_day=find_after_month_day(fDay, i))
             stags.save()
@@ -27,8 +36,6 @@ def create_stagings(sender, instance, created, **kwargs):
             stags.save()
     else:
         print('error: no cashOut and loan')
-
-
 
 def find_after_month_day(cur, m):
     if m == 0:

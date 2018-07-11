@@ -4,6 +4,7 @@ from django.forms import ValidationError
 from datetime import date
 
 from .models import CashOut
+from .models import Installment
 
 
 class CashPayForm(forms.Form):
@@ -37,4 +38,34 @@ class CashPayForm(forms.Form):
             else:
                 self.co.apr = 1000
             self.co.save()
+
+class CashInstallmentForm(forms.Form):
+    stage_count = forms.IntegerField(label=u'期数')
+    rate = forms.FloatField(label='利率')
+    pay_day = forms.DateField(label=u'首次还款日', required=True)
+
+    def __init__(self,*args,**kwargs):
+        super(CashInstallmentForm, self).__init__(*args, **kwargs)
+
+        co_id = self.initial.get('co_id')
+        if co_id:
+            self.co = CashOut.objects.filter(pk=co_id).first()
+            if self.co:
+                self.fields['stage_count'].initial = 9
+                self.fields['rate'].initial = 0.35
+                self.fields['pay_day'].initial = date.today()
+        else:
+            self.co = None
+
+    def save(self):
+        if self.co:
+            data = self.cleaned_data
+            installment = self.co.installment_set.first()
+            if installment:
+                return
+            installment = Installment(cashOut=self.co, amount=self.co.amount, balance=self.co.amount)
+            installment.stage_count = data['stage_count']
+            installment.charge_rate = data['rate']
+            installment.first_repay_day = data['pay_day']
+            installment.save()
 

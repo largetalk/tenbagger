@@ -25,4 +25,8 @@ urlpatterns = [
     path('loans/', views.loans, name='loans'),
     path('co/<int:card_id>/', views.card_co, name='card_co'),
     path('co/pay/<int:co_id>/', views.cash_pay, name='cash_pay'),
+    path('co/installment/<int:co_id>/', views.cash_installment, name='cash_installment'),
+    path('installment/', views.installment, name='installment'),
+    path('staging/<int:installment_id>/', views.ins_staging, name='ins_staging'),
+    path('staging/repay/<int:staging_id>/', views.staging_repay, name='staging_repay'),
 ]

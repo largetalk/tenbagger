@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 from datetime import timedelta
 from json import dumps
@@ -10,7 +11,10 @@ from json import dumps
 from .models import CreditCard
 from .models import CashOut
 from .models import Loans
+from .models import Installment
+from .models import Staging
 from .forms import CashPayForm
+from .forms import CashInstallmentForm
 
 
 @login_required
@@ -62,7 +66,7 @@ def stats(request):
 def card_co(request, card_id):
     card = CreditCard.objects.get(pk=card_id)
     co_list = CashOut.objects.filter(card=card, isRepaid=False)
-    
+
     return render(request, 'card_co.html', locals())
 
 @login_required
@@ -87,3 +91,41 @@ def loans(request):
     except EmptyPage:
         loan_list = paginator.get_page(paginator.num_pages)
     return render(request, 'loans.html', locals())
+
+@login_required
+def installment(request):
+    installments = Installment.objects.all()
+    total = installments.count()
+    paginator = Paginator(installments, 20)
+    page = request.GET.get('page')
+    try:
+        installment_list = paginator.get_page(page)
+    except PageNotAnInteger:
+        installment_list = paginator.get_page(1)
+    except EmptyPage:
+        installment_list = paginator.get_page(paginator.num_pages)
+    return render(request, 'installment.html', locals())
+
+@login_required
+def ins_staging(request, installment_id):
+    installment = Installment.objects.get(pk=installment_id)
+    staging_list = Staging.objects.filter(installment=installment)
+
+    return render(request, 'ins_staging.html', locals())
+
+@login_required
+@csrf_exempt
+def staging_repay(request, staging_id):
+    staging = Staging.objects.get(pk=staging_id)
+    staging.isRepaid = True
+    staging.save()
+    return HttpResponse(dumps({'status':0}), "text/application")
+
+@login_required
+def cash_installment(request, co_id):
+    form = CashInstallmentForm(request.POST or None,initial={'co_id':co_id or None})
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+        return HttpResponse(dumps({'status':0}), "text/application")
+    return render(request, 'cash_pay_form.tpl', {'form': form})
