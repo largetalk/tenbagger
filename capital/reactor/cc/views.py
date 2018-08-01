@@ -39,7 +39,7 @@ def calendar(request):
     _b = date(now.year, now.month, 1)
     _e = _b + timedelta(61)
     debt_list = []
-    cashOut_list = CashOut.objects.filter(isRepaid=False, due_day__gt=_b, due_day__lt=_e)
+    cashOut_list = CashOut.objects.filter(isRepaid=False, due_day__gte=_b, due_day__lt=_e)
     for co in cashOut_list:
         if not co.hasInstallment:
             debt_list.append({
