@@ -25,7 +25,7 @@ ARTICAL_FILE = os.path.join(BASE_DIR, "sjcyp.txt")
 URL_FILE = os.path.join(BASE_DIR, "url.txt")
 FAIL_LOG = os.path.join(BASE_DIR, 'fail.log')
 START_URL = 'http://blog.sina.com.cn/s/articlelist_1576966507_0_%s.html'
-START_IDX = 1
+START_IDX = 12
 
 
 REFER_URL = 'http://xueqiu.com'
