@@ -38,6 +38,7 @@
             <th>amount</th>
             <th>count</th>
             <th>first repay day</th>
+            <th>next repay day</th>
             <th>balance</th>
             <th style="width:100px">编辑 </th>
         </tr>
@@ -49,6 +50,7 @@
       <td>{{ ins.amount }}</td>
       <td>{{ ins.stage_count }}</td>
       <td>{{ ins.first_repay_day |date:"Y-m-d" }}</td>
+      <td>{{ ins.next_repay_day |date:"Y-m-d" }}</td>
       <td>{{ ins.balance }}</td>
       <td>
           <a class="btn btn-info btn-small update-case-progress" rel="" data-toggle="modal" href="#" title="还款" alt='编辑'><i class="icon-edit icon-white"></i></a>

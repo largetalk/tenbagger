@@ -151,6 +151,13 @@ class Installment(BaseModel):
         return 'null'
 
     @property
+    def next_repay_day(self):
+        stagings = Staging.objects(installment=self, isRepaid=False).order_by("pay_day")
+        if len(stagings) > 0:
+            return stagings[0].pay_day
+        return None
+
+    @property
     def name(self):
         if self.loan:
             return self.loan.bank
