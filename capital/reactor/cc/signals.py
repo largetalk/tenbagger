@@ -41,7 +41,7 @@ def find_after_month_day(cur, m):
     if m == 0:
         return cur
     newM = cur.month + m
-    yAdd = int(newM / 12)
+    yAdd = int(newM / 13)
     while newM > 12:
         newM -= 12
     d = cur.day
