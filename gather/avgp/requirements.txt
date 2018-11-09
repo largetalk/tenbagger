@@ -4,3 +4,6 @@ panda==0.3.1
 pandas==0.19.2
 tushare==1.2.15
 SQLAlchemy==1.2.13
+MySQL-python==1.2.5
+BeautifulSoup==3.2.1
+bs4==0.0.1

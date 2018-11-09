@@ -1,7 +1,8 @@
+#coding:utf8
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy import Sequence
 from sqlalchemy.orm import sessionmaker
 
@@ -12,28 +13,55 @@ engine = create_engine(db_url, echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
-class User(Base):
-    __tablename__ = 'users'
+from contextlib import contextmanager
 
-     id = Column(Integer, primary_key=True)
-     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
-     name = Column(String)
-     fullname = Column(String)
-     password = Column(String)
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of operations."""
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
-     def __repr__(self):
-         return "<User(name='%s', fullname='%s', password='%s')>" % (
-             self.name, self.fullname, self.password)
+class Stock(Base):
+    __tablename__ = 'stocks'
 
-def create_table():
+    id = Column(Integer, Sequence('stock_id_seq'), primary_key=True)
+    ts_code = Column(String(16), unique=True)
+    symbol = Column(String(16))
+    name = Column(String(32))
+    area = Column(String(50))
+    industry = Column(String(100))
+    fullname = Column(String(200))
+    enname = Column(String(200))
+    market = Column(String(32))
+    exchange = Column(String(16))
+    curr_type = Column(String(16))
+    list_status = Column(String(4))
+    list_date = Column(Date)
+    delist_date = Column(Date)
+    is_hs = Column(String(4))
+
+    def __repr__(self):
+       return "<Stock(%s, %s)>" % (self.symbol, self.name)
+
+
+def init_db():
     Base.metadata.create_all(engine)
 
-def create_session():
-    session = Session()
-    return session
+#顶固删除数据库函数
+def drop_db():
+    Base.metadata.drop_all(engine)
+
+#init_db()
 
 def test():
-    session = create_session()
+    session = Session()
     ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
     session.add(ed_user) #insert
     our_user = session.query(User).filter_by(name='ed').first() #select
