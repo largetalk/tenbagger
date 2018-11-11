@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy import Sequence
+from sqlalchemy import Index, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 
 from settings import db_url
@@ -49,6 +50,23 @@ class Stock(Base):
 
     def __repr__(self):
        return "<Stock(%s, %s)>" % (self.symbol, self.name)
+
+class TradeCal(Base):
+    __tablename__ = 'trade_cal'
+    DATE_DELIMITER = ","
+
+    id = Column(Integer, Sequence('tradeCal_id_seq'), primary_key=True)
+    exchange = Column(String(16), nullable=False)
+    date = Column(Date, nullable=False)
+    cals = Column(String(100))
+
+    __table_args__ = (
+        UniqueConstraint('exchange', 'date', name='exchange_date_idx'),
+    )
+
+    def getCals(self):
+        return cal.split(DATE_DELIMITER)
+
 
 
 def init_db():

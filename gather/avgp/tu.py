@@ -58,7 +58,7 @@ def getStockDaily():
     #or
     df = pro.daily(trade_date='20180810') # get all stock one day data
 
-def getTradeCal():
+def getTradeCal(year, exchange=''):
     '''
     input:
         exchange    str N   交易所 SSE上交所 SZSE深交所
@@ -71,4 +71,7 @@ def getTradeCal():
         is_open int 是否交易 0休市 1交易
         pretrade_date   str 上一个交易日
     '''
-    pro.trade_cal(exchange='', start_date='20180101', end_date='20181231')
+    start_date = '%s0101' % year
+    end_date = '%s1231' % year
+    df = pro.trade_cal(exchange=exchange, start_date=start_date, end_date=end_date)
+    return df[df['is_open'] == 1]
