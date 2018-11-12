@@ -54,7 +54,7 @@ def getStockDaily():
         vol float   成交量 （手）
         amount  float   成交额 （千元）
     '''
-    df = pro.daily(ts_code='000001.SZ', start_date='20180701', end_date='20180718') #get one stock daily history
+    df = pro.daily(ts_code='000001.SZ', start_date='20180701', end_date='20180718', fields="ts_code,trade_date,close,vol,amount") #get one stock daily history
     #or
     df = pro.daily(trade_date='20180810') # get all stock one day data
 

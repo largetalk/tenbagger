@@ -67,6 +67,20 @@ class TradeCal(Base):
     def getCals(self):
         return cal.split(DATE_DELIMITER)
 
+class TradeDaily(Base):
+    __tablename__ = 'trade_daily'
+    DATE_DELIMITER = ","
+
+    id = Column(Integer, Sequence('tradeDaily_id_seq'), primary_key=True)
+    ts_code = Column(String(16), nullable=False)
+    date = Column(Date, nullable=False)
+    closes = Column(String)
+    vols = Column(String)
+    amounts = Column(String)
+
+    __table_args__ = (
+        UniqueConstraint('ts_code', 'date', name='ts_code_date_idx'),
+    )
 
 
 def init_db():
