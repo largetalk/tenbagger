@@ -74,9 +74,9 @@ class TradeDaily(Base):
     id = Column(Integer, Sequence('tradeDaily_id_seq'), primary_key=True)
     ts_code = Column(String(16), nullable=False)
     date = Column(Date, nullable=False)
-    closes = Column(String)
-    vols = Column(String)
-    amounts = Column(String)
+    closes = Column(String(256))
+    vols = Column(String(360))
+    amounts = Column(String(400))
 
     __table_args__ = (
         UniqueConstraint('ts_code', 'date', name='ts_code_date_idx'),
@@ -90,7 +90,7 @@ def init_db():
 def drop_db():
     Base.metadata.drop_all(engine)
 
-#init_db()
+init_db()
 
 def test():
     session = Session()

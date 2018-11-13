@@ -33,7 +33,7 @@ def getStockList():
     #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
     return pro.stock_basic(exchange='', list_status='L')
 
-def getStockDaily():
+def getStockDaily(ts_code, start_date, end_date):
     '''
     input:
         ts_code str N   股票代码（二选一）
@@ -54,9 +54,9 @@ def getStockDaily():
         vol float   成交量 （手）
         amount  float   成交额 （千元）
     '''
-    df = pro.daily(ts_code='000001.SZ', start_date='20180701', end_date='20180718', fields="ts_code,trade_date,close,vol,amount") #get one stock daily history
+    return pro.daily(ts_code=ts_code, start_date=start_date, end_date=end_date, fields="ts_code,trade_date,close,vol,amount") #get one stock daily history
     #or
-    df = pro.daily(trade_date='20180810') # get all stock one day data
+    #df = pro.daily(trade_date='20180810') # get all stock one day data
 
 def getTradeCal(year, exchange=''):
     '''
