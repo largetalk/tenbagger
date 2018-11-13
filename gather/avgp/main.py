@@ -58,11 +58,14 @@ class TradeCalCache():
     __cache__ = {}
 
     @classmethod
-    def getOneYearCal(cls, year):
+    def getOneYearCal(cls, exchange, year):
+        key = '%s_%s' % (exchange, year)
         if year in cls.__cache__:
-            return cls.__cache__[year]
+            return cls.__cache__[key]
         with session_scope() as session:
-            pass
+            for m in range(1, 13):
+                date = datetime(year, m, 1).date()
+                tradeCal = session.query(TradeCal).filter_by(exchange=exchange, date=date).first()
 
 def fetchAndSaveTradeDaily():
     with session_scope() as session:
