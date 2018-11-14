@@ -86,6 +86,8 @@ def fetchOneStockDaily(sess, ts_code, list_date):
     td = sess.query(TradeDaily).filter_by(ts_code=ts_code).order_by(TradeDaily.date.desc()).first()
     today = datetime.now().date()
     if td is not None:
+        if td.year == today.year and td.month == today.month: #temporarily for performace
+            return
         from_date = td.date
     else:
         from_date = max(datetime(2000, 1, 1).date(), list_date)
