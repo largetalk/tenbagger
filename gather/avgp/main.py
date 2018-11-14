@@ -62,7 +62,7 @@ class TradeCalCache():
     @classmethod
     def getOneYearCal(cls, exchange, year):
         key = '%s_%s' % (exchange, year)
-        if year in cls.__cache__:
+        if key in cls.__cache__:
             return cls.__cache__[key]
         with session_scope() as session:
             one_year_cals = defaultdict(lambda:[])
