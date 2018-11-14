@@ -65,7 +65,7 @@ class TradeCal(Base):
     )
 
     def getCals(self):
-        return cal.split(DATE_DELIMITER)
+        return self.cals.split(self.DATE_DELIMITER)
 
 class TradeDaily(Base):
     __tablename__ = 'trade_daily'
@@ -90,7 +90,7 @@ def init_db():
 def drop_db():
     Base.metadata.drop_all(engine)
 
-init_db()
+#init_db()
 
 def test():
     session = Session()
