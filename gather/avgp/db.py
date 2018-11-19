@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy import Sequence
+from sqlalchemy import Float
 from sqlalchemy import Index, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 
@@ -81,6 +82,12 @@ class TradeDaily(Base):
     __table_args__ = (
         UniqueConstraint('ts_code', 'date', name='ts_code_date_idx'),
     )
+
+class DailyStats(Base):
+    __tablename__ = 'daily_stats'
+
+    date = Column(Date, primary_key=True)
+    median_close = Column(Float(precision=4), nullable=False)
 
 
 def init_db():

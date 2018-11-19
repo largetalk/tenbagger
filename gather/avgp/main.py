@@ -1,6 +1,7 @@
 from datetime import datetime
 from datetime import timedelta
 import pandas as pd
+import numpy as np
 from collections import defaultdict
 from sqlalchemy.sql import exists
 from tu import getStockList
@@ -9,6 +10,7 @@ from tu import getStockDaily
 from db import Stock
 from db import TradeCal
 from db import TradeDaily
+from db import DailyStats
 from db import session_scope
 
 
@@ -128,6 +130,40 @@ def fetchOneStockDaily(sess, ts_code, list_date):
                 tradeDaily.amounts = TradeDaily.DATE_DELIMITER.join(amounts)
                 sess.add(tradeDaily)
         sess.commit()
+
+def calc_median_close():
+    with session_scope() as session:
+        ds = session.query(DailyStats).order_by(DailyStats.date.desc()).first()
+        if ds is not None:
+            from_date = ds.date
+        else:
+            from_date = datetime(2000, 1, 1).date()
+        today = datetime.now().date()
+        for year in range(from_date.year, today.year + 1):
+            for m in range(1, 13):
+                d = datetime(year, m, 1).date()
+                if d > today:
+                    print("calc median done")
+                    return
+                tradeCal = session.query(TradeCal).filter_by(date=d).first()
+                if tradeCal is None:
+                    print("trade cal %s not found" % d)
+                    continue
+                month_closes = []
+                for tradeDaily in session.query(TradeDaily).filter_by(date=d):
+                    prices = [ float(x) if x != '-' else np.nan for x in tradeDaily.closes.split(',') ]
+                    month_closes.append(prices)
+                df  = pd.DataFrame(np.array(month_closes), columns=tradeCal.getCals())
+                median = df.median()
+                for col in tradeCal.getCals():
+                    close_d = datetime(year, m, int(col)).date()
+                    ds = session.query(DailyStats).filter_by(date=close_d).first()
+                    if ds is None:
+                        ds = DailyStats(date=close_d)
+                    ds.median_close = median[col]
+                    session.add(ds)
+                session.commit()
+
     
 
 if __name__ == '__main__':
@@ -135,4 +171,5 @@ if __name__ == '__main__':
     #fetchAndSaveTradeCal()
     #with session_scope() as session:
     #    fetchOneStockDaily(session, '300760.SZ', datetime(2018,1,1).date())
-    fetchAndSaveTradeDaily()
+    #fetchAndSaveTradeDaily()
+    calc_median_close()
