@@ -176,11 +176,14 @@ def calc_median_close():
                 session.commit()
 
 
-def plot_median_close():
+def plot_median_close(start_date=None):
     import matplotlib.pyplot as plt
     lst = []
     with session_scope() as session:
-        dss = session.query(DailyStats).order_by(DailyStats.date).all()
+        if start_date is not None:
+            dss = session.query(DailyStats).filter(DailyStats.date > start_date).order_by(DailyStats.date).all()
+        else:
+            dss = session.query(DailyStats).order_by(DailyStats.date).all()
         for ds in dss:
             lst.append([ds.date, ds.median_close])
         df = pd.DataFrame(np.array(lst), columns=['date', 'close'])

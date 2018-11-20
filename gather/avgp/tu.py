@@ -58,6 +58,9 @@ def getStockDaily(ts_code, start_date, end_date):
     #or
     #df = pro.daily(trade_date='20180810') # get all stock one day data
 
+def getOneDaily(trade_date):
+    return pro.daily(trade_date=trade_date, fields="ts_code,trade_date,close,vol")
+
 def getTradeCal(year, exchange=''):
     '''
     input:
