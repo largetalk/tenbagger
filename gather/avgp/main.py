@@ -88,8 +88,8 @@ def fetchOneStockDaily(sess, ts_code, list_date):
     td = sess.query(TradeDaily).filter_by(ts_code=ts_code).order_by(TradeDaily.date.desc()).first()
     today = datetime.now().date()
     if td is not None:
-        if td.year == today.year and td.month == today.month: #temporarily for performace
-            return
+        #if td.year == today.year and td.month == today.month: #temporarily for performace
+        #    return
         from_date = td.date
     else:
         from_date = max(datetime(2000, 1, 1).date(), list_date)
@@ -140,7 +140,12 @@ def calc_median_close():
             from_date = datetime(2000, 1, 1).date()
         today = datetime.now().date()
         for year in range(from_date.year, today.year + 1):
-            for m in range(1, 13):
+            m_f = 1
+            m_t = 13
+            if from_date.year == today.year:
+                m_f = from_date.month
+                m_to = today.month + 1
+            for m in range(m_f, m_t):
                 d = datetime(year, m, 1).date()
                 if d > today:
                     print("calc median done")
@@ -153,10 +158,16 @@ def calc_median_close():
                 for tradeDaily in session.query(TradeDaily).filter_by(date=d):
                     prices = [ float(x) if x != '-' else np.nan for x in tradeDaily.closes.split(',') ]
                     month_closes.append(prices)
+                if len(month_closes) < 1:
+                    print('trade daily %s not found' % d)
+                    continue
                 df  = pd.DataFrame(np.array(month_closes), columns=tradeCal.getCals())
                 median = df.median()
                 for col in tradeCal.getCals():
                     close_d = datetime(year, m, int(col)).date()
+                    if np.isnan(median[col]) or median[col] < 0.01:
+                        print('median %s is unexists' % close_d)
+                        continue
                     ds = session.query(DailyStats).filter_by(date=close_d).first()
                     if ds is None:
                         ds = DailyStats(date=close_d)
@@ -164,7 +175,19 @@ def calc_median_close():
                     session.add(ds)
                 session.commit()
 
-    
+
+def plot_median_close():
+    import matplotlib.pyplot as plt
+    lst = []
+    with session_scope() as session:
+        dss = session.query(DailyStats).order_by(DailyStats.date).all()
+        for ds in dss:
+            lst.append([ds.date, ds.median_close])
+        df = pd.DataFrame(np.array(lst), columns=['date', 'close'])
+
+    df.plot(x = 'date', y = 'close', kind="line", title="median close", grid=True)
+    plt.show()
+
 
 if __name__ == '__main__':
     #fetchAndSaveStockList()
@@ -172,4 +195,5 @@ if __name__ == '__main__':
     #with session_scope() as session:
     #    fetchOneStockDaily(session, '300760.SZ', datetime(2018,1,1).date())
     #fetchAndSaveTradeDaily()
-    calc_median_close()
+    #calc_median_close()
+    plot_median_close()
