@@ -53,7 +53,7 @@ class CreditCard(BaseModel):
         }
 
 
-    def find_next_due_day(self, day=date.today):
+    def find_next_due_day(self, day=date.today()):
         bill_day = date(day.year, day.month, self.bill_day)
         if bill_day < day:
             if bill_day.month != 12:
