@@ -29,6 +29,10 @@ class CreditCard(BaseModel):
         return sum([ x.fee for x in CashOut.objects.filter(card=self) ])
 
     @property
+    def next_due_day(self):
+        return self.find_next_due_day()
+
+    @property
     def stats(self):
         co_list = CashOut.objects.filter(card=self, isRepaid=False).order_by("due_day")
         unpay_count = co_list.count()
