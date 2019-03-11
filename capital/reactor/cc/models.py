@@ -30,7 +30,20 @@ class CreditCard(BaseModel):
 
     @property
     def next_due_day(self):
-        return self.find_next_due_day()
+        day = date.today()
+        if self.card_type == _DUE_PERIOD_PAY:
+            due_day = date(day.year, day.month, self.bill_day) + timedelta(days=self.due_period)
+        if self.card_type == _DUE_DAY_PAY:
+            due_day = date(day.year, day.month, self.due_day)
+
+        if due_day > day:
+            return due_day
+
+        if due_day.month != 12:
+            return date(due_day.year, due_day.month + 1, due_day.day)
+        else:
+            return date(due_day.year + 1, 1, due_day.day)
+
 
     @property
     def stats(self):
