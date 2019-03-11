@@ -50,7 +50,7 @@
       <td><a href="{% url 'card_co' card.pk %}">{{ card.name }}({{ card.tail_no}})</a></td>
       <td>{{ card.lines }}</td>
       <td>{{ card.bill_day }}</td>
-      <td>{{ card.next_due_day |date:”Y-m-d"  }}</td>
+      <td>{{ card.next_due_day |date:"Y-m-d"  }}</td>
       <!--<td>{{ card.due_day }}/{{ card.due_period }}</td>-->
       <td>{{ card.unpay_count }}</td>
       <td>{{ card.total_fee }}</th>
