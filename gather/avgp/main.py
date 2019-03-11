@@ -197,6 +197,6 @@ if __name__ == '__main__':
     #fetchAndSaveTradeCal()
     #with session_scope() as session:
     #    fetchOneStockDaily(session, '300760.SZ', datetime(2018,1,1).date())
-    #fetchAndSaveTradeDaily()
-    #calc_median_close()
+    fetchAndSaveTradeDaily()
+    calc_median_close()
     plot_median_close()
