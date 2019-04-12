@@ -107,7 +107,7 @@ def loans(request):
 
 @login_required
 def installment(request):
-    installments = Installment.objects.filter(balance<1)
+    installments = Installment.objects.filter(balance__gt=1)
     total = installments.count()
     paginator = Paginator(installments, 20)
     page = request.GET.get('page')
