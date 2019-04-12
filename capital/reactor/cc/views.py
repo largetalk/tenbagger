@@ -93,7 +93,7 @@ def cash_pay(request, co_id):
 
 @login_required
 def loans(request):
-    loans = Loans.objects.all()
+    loans = Loans.objects.filter(isRepaid=False)
     total = loans.count()
     paginator = Paginator(loans, 20)
     page = request.GET.get('page')
@@ -107,7 +107,7 @@ def loans(request):
 
 @login_required
 def installment(request):
-    installments = Installment.objects.all()
+    installments = Installment.objects.filter(balance<1)
     total = installments.count()
     paginator = Paginator(installments, 20)
     page = request.GET.get('page')
