@@ -5,18 +5,33 @@ from datetime import date, timedelta
 from .models import Installment
 from .models import Staging
 
+@receiver(post_save, sender=Staging)
+def save_stagings(sender, instance, created, **kwargs):
+    if not created:
+        ins = instance.installment
+        if ins.balance < 1:
+            status = [ s[0] for s in ins.staging_set.values_list('isRepaid') ]
+            if all(status):
+                if ins.cashOut:
+                    ins.cashOut.isRepaid = True
+                    ins.cashOut.save()
+                if ins.loan:
+                    ins.loan.isRepaid = True
+                    ins.loan.save()
+        return
+
 @receiver(post_save, sender=Installment)
 def create_stagings(sender, instance, created, **kwargs):
     if not created:
-        if instance.balance < 10:
-            status = [ s[0] for s in instance.staging_set.values_list('isRepaid') ]
-            if all(status):
-                if instance.cashOut:
-                    instance.cashOut.isRepaid = True
-                    instance.cashOut.save()
-                if instance.loan:
-                    instance.loan.isRepaid = True
-                    instance.loan.save()
+        #if instance.balance < 10:
+        #    status = [ s[0] for s in instance.staging_set.values_list('isRepaid') ]
+        #    if all(status):
+        #        if instance.cashOut:
+        #            instance.cashOut.isRepaid = True
+        #            instance.cashOut.save()
+        #        if instance.loan:
+        #            instance.loan.isRepaid = True
+        #            instance.loan.save()
         return
     amount = instance.amount
     count = instance.stage_count
