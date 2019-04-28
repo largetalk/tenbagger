@@ -19,6 +19,8 @@ def fetchAndSaveStockList():
     with session_scope() as session:
         for i in data.index:
             item = data.iloc[i]
+            if session.query(Stock.ts_code).filter_by(ts_code=item['ts_code']).first() is not None:
+                continue
             date = datetime.strptime(item['list_date'], '%Y%m%d').date()
             stock = Stock(ts_code=item['ts_code'],
                          symbol=item['symbol'],
@@ -29,11 +31,13 @@ def fetchAndSaveStockList():
                          list_status='L',
                          list_date=date)
             session.add(stock)
+            print('add stock %s' % item['name'].encode('utf-8'))
 
 
 def fetchAndSaveTradeCal():
-    exchange = 'SZSE'
-    years = range(2000, 2019)
+    #exchange = 'SZSE'
+    exchange = 'SSE'
+    years = range(2017, 2020)
     for y in years:
         df = getTradeCal(y, exchange=exchange)
         df  = df.cal_date.apply(lambda x: pd.Series([x[:6], x[6:]], index=['month', 'day']))
@@ -56,6 +60,7 @@ def fetchAndSaveTradeCal():
                 else:
                     tradeCal.cals = calstr
                 session.add(tradeCal)
+                print("add traceCal %s" % date)
 
 
 class TradeCalCache():
@@ -84,6 +89,28 @@ def fetchAndSaveTradeDaily():
         for ts_code, list_date in session.query(Stock.ts_code, Stock.list_date):
             fetchOneStockDaily(session, ts_code, list_date)
 
+def needFetchDaily(td, cal_dic):
+    if td is None:
+        return True
+    today = datetime.now().date()
+    yc = datetime(today.year, today.month, 1).date()
+    if td.date < yc:
+        return True
+
+    cals = [ int(x[-2:]) for x in cal_dic[today.month] ]
+    if datetime.now().hour > 15:
+        cals = filter(lambda x: x <= today.day, cals)
+    else:
+        cals = filter(lambda x: x < today.day, cals)
+
+    closes = td.closes.split(TradeDaily.DATE_DELIMITER)
+    #print cals
+    #print closes
+    if closes[len(cals) - 1] != '-':
+        return False
+    return True
+    
+
 def fetchOneStockDaily(sess, ts_code, list_date):
     td = sess.query(TradeDaily).filter_by(ts_code=ts_code).order_by(TradeDaily.date.desc()).first()
     today = datetime.now().date()
@@ -96,14 +123,23 @@ def fetchOneStockDaily(sess, ts_code, list_date):
     
     exchange = 'SSE' if ts_code.endswith('.SH') else 'SZSE'
     for year in range(from_date.year, today.year + 1):
+        cal_dic = TradeCalCache.getOneYearCal(exchange, year)
+        if not needFetchDaily(td, cal_dic):
+            #print('skip fetch %s stock daily' % ts_code)
+            continue
+
         start_date = '%s0101' % year
         if year == from_date.year:
             start_date = '%s%02d01' % (year, from_date.month)
         end_date = '%s1231' % year
-        cal_dic = TradeCalCache.getOneYearCal(exchange, year)
+        if year == today.year:
+            end_date = '%s%02d31' % (year, today.month)
+        print("fetch %s stock daily from %s to %s" % (ts_code, start_date, end_date))
         df = getStockDaily(ts_code, start_date, end_date)
         for m in range(1, 13):
             date = datetime(year, m, 1).date()
+            if date > today:
+                break
             closes = []
             vols = []
             amounts = []
@@ -191,12 +227,17 @@ def plot_median_close(start_date=None):
     df.plot(x = 'date', y = 'close', kind="line", title="median close", grid=True)
     plt.show()
 
-
-if __name__ == '__main__':
-    #fetchAndSaveStockList()
-    #fetchAndSaveTradeCal()
-    #with session_scope() as session:
-    #    fetchOneStockDaily(session, '300760.SZ', datetime(2018,1,1).date())
+def main():
+    today = datetime.now()
+    if today.day == 1:
+        fetchAndSaveStockList()
+        fetchAndSaveTradeCal()
     fetchAndSaveTradeDaily()
     calc_median_close()
     plot_median_close()
+
+if __name__ == '__main__':
+    main()
+    #with session_scope() as session:
+    #    fetchOneStockDaily(session, '600121.SH', datetime(2018,1,1).date())
+

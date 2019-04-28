@@ -9,9 +9,11 @@ from sqlalchemy import Index, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 
 from settings import db_url
+from settings import DB_ECHO
+from settings import DB_ECHO_POOL
 
 
-engine = create_engine(db_url, echo=True)
+engine = create_engine(db_url, echo=DB_ECHO, echo_pool=DB_ECHO_POOL)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 

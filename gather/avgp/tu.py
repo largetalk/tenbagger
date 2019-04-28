@@ -31,7 +31,8 @@ def getStockList():
         is_hs   str 是否沪深港通标的，N否 H沪股通 S深股通
     '''
     #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
-    return pro.stock_basic(exchange='', list_status='L')
+    #return pro.stock_basic(exchange='', list_status='L')
+    return pro.stock_basic()
 
 def getStockDaily(ts_code, start_date, end_date):
     '''
