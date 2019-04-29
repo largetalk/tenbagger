@@ -239,5 +239,5 @@ def main():
 if __name__ == '__main__':
     main()
     #with session_scope() as session:
-    #    fetchOneStockDaily(session, '600121.SH', datetime(2018,1,1).date())
+    #    fetchOneStockDaily(session, '300139.SZ', datetime(2018,1,1).date())
 

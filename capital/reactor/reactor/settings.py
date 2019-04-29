@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "121.199.4.41"]
 
 INSTALLED_APPS = [
     'cc.apps.CcConfig',
+    'quant.apps.QuantConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

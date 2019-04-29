@@ -55,7 +55,11 @@ def getStockDaily(ts_code, start_date, end_date):
         vol float   成交量 （手）
         amount  float   成交额 （千元）
     '''
-    return pro.daily(ts_code=ts_code, start_date=start_date, end_date=end_date, fields="ts_code,trade_date,close,vol,amount") #get one stock daily history
+    try:
+        return pro.daily(ts_code=ts_code, start_date=start_date, end_date=end_date, fields="ts_code,trade_date,close,vol,amount") #get one stock daily history
+    except BaseException, e:
+        print type(e), e.message
+        raise e
     #or
     #df = pro.daily(trade_date='20180810') # get all stock one day data
 
