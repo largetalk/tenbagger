@@ -66,6 +66,43 @@ def getStockDaily(ts_code, start_date, end_date):
 def getOneDaily(trade_date):
     return pro.daily(trade_date=trade_date, fields="ts_code,trade_date,close,vol")
 
+def getDailyBasic(ts_code, start_date, end_date):
+    '''
+    input:
+        ts_code str N   股票代码（二选一）
+        trade_date  str N   交易日期（二选一）
+        start_date  str N   开始日期(YYYYMMDD)
+        end_date    str N   结束日期(YYYYMMDD)
+
+    output:
+        ts_code str 股票代码
+        trade_date  str 交易日期
+        close   float   当日收盘价
+        turnover_rate   float   换手率（%）
+        turnover_rate_f float   换手率（自由流通股）
+        volume_ratio    float   量比
+        pe  float   市盈率（总市值/净利润）
+        pe_ttm  float   市盈率（TTM）
+        pb  float   市净率（总市值/净资产）
+        ps  float   市销率
+        ps_ttm  float   市销率（TTM）
+        total_share float   总股本 （万股）
+        float_share float   流通股本 （万股）
+        free_share  float   自由流通股本 （万）
+        total_mv    float   总市值 （万元）
+        circ_mv float   流通市值（万元）
+    '''
+    try:
+        return pro.daily_basic(ts_code=ts_code, start_date=start_date, end_date=end_date, fields="ts_code,trade_date,pe_ttm,pb,total_mv") #get one stock daily history
+    except BaseException, e:
+        print type(e), e.message
+        raise e
+    #or
+    #df = pro.daily(trade_date='20180810') # get all stock one day data
+
+def getOneDailyBasic(trade_date):
+    return pro.daily_basic(trade_date=trade_date, fields="ts_code,trade_date,pe_ttm,pb,total_mv")
+
 def getTradeCal(year, exchange=''):
     '''
     input:

@@ -80,6 +80,9 @@ class TradeDaily(Base):
     closes = Column(String(256))
     vols = Column(String(360))
     amounts = Column(String(400))
+    pettm = Column(String(300))
+    pb = Column(String(256))
+    totalmv = Column(String(400))
 
     __table_args__ = (
         UniqueConstraint('ts_code', 'date', name='ts_code_date_idx'),

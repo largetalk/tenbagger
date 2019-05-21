@@ -4,9 +4,13 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 from sqlalchemy.sql import exists
+from sqlalchemy import or_, and_
+from sqlalchemy import not_
 from tu import getStockList
 from tu import getTradeCal
 from tu import getStockDaily
+from tu import getDailyBasic
+from tu import getOneDailyBasic
 from db import Stock
 from db import TradeCal
 from db import TradeDaily
@@ -88,6 +92,7 @@ def fetchAndSaveTradeDaily():
     with session_scope() as session:
         for ts_code, list_date in session.query(Stock.ts_code, Stock.list_date):
             fetchOneStockDaily(session, ts_code, list_date)
+            fetchOneDailyBasic(session, ts_code, list_date)
 
 def needFetchDaily(td, cal_dic):
     if td is None:
@@ -112,7 +117,7 @@ def needFetchDaily(td, cal_dic):
     
 
 def fetchOneStockDaily(sess, ts_code, list_date):
-    td = sess.query(TradeDaily).filter_by(ts_code=ts_code).order_by(TradeDaily.date.desc()).first()
+    td = sess.query(TradeDaily).filter(TradeDaily.ts_code==ts_code, TradeDaily.closes!=None).order_by(TradeDaily.date.desc()).first()
     today = datetime.now().date()
     if td is not None:
         #if td.year == today.year and td.month == today.month: #temporarily for performace
@@ -166,6 +171,63 @@ def fetchOneStockDaily(sess, ts_code, list_date):
                 tradeDaily.amounts = TradeDaily.DATE_DELIMITER.join(amounts)
                 sess.add(tradeDaily)
         sess.commit()
+
+def fetchOneDailyBasic(sess, ts_code, list_date):
+    td = sess.query(TradeDaily).filter(TradeDaily.ts_code==ts_code, TradeDaily.pb!=None).order_by(TradeDaily.date.desc()).first()
+    today = datetime.now().date()
+    if td is not None:
+        #if td.year == today.year and td.month == today.month: #temporarily for performace
+        #    return
+        from_date = td.date
+    else:
+        from_date = max(datetime(2000, 1, 1).date(), list_date)
+    
+    exchange = 'SSE' if ts_code.endswith('.SH') else 'SZSE'
+    for year in range(from_date.year, today.year + 1):
+        cal_dic = TradeCalCache.getOneYearCal(exchange, year)
+        if not needFetchDaily(td, cal_dic):
+            #print('skip fetch %s stock daily' % ts_code)
+            continue
+
+        start_date = '%s0101' % year
+        if year == from_date.year:
+            start_date = '%s%02d01' % (year, from_date.month)
+        end_date = '%s1231' % year
+        if year == today.year:
+            end_date = '%s%02d31' % (year, today.month)
+        print("fetch %s daily basic from %s to %s" % (ts_code, start_date, end_date))
+        df = getDailyBasic(ts_code, start_date, end_date)
+        for m in range(1, 13):
+            date = datetime(year, m, 1).date()
+            if date > today:
+                break
+            pettm = []
+            pb = []
+            totalmv = []
+            mflag = False
+            for cal in cal_dic[m]:
+                oneDF = df[df['trade_date'] == cal]
+                if len(oneDF.index) < 1:
+                    pettm.append('-')
+                    pb.append('-')
+                    totalmv.append('-')
+                else:
+                    mflag = True
+                    item = oneDF.iloc[0]
+                    pettm.append('%.2f' % item.pe_ttm)
+                    pb.append('%.2f' % item.pb)
+                    totalmv.append(str(int(item.total_mv)))
+            if mflag:
+                tradeDaily = sess.query(TradeDaily).filter_by(ts_code=ts_code, date=date).first()
+                if tradeDaily is None:
+                    tradeDaily = TradeDaily(ts_code=ts_code,
+                                           date=date)
+                tradeDaily.pettm = TradeDaily.DATE_DELIMITER.join(pettm)
+                tradeDaily.pb = TradeDaily.DATE_DELIMITER.join(pb)
+                tradeDaily.totalmv = TradeDaily.DATE_DELIMITER.join(totalmv)
+                sess.add(tradeDaily)
+        sess.commit()
+
 
 def calc_median_close():
     with session_scope() as session:
@@ -240,4 +302,5 @@ if __name__ == '__main__':
     main()
     #with session_scope() as session:
     #    fetchOneStockDaily(session, '300139.SZ', datetime(2018,1,1).date())
+    #    fetchOneDailyBasic(session, '300139.SZ', datetime(2018,1,1).date())
 
