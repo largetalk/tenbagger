@@ -246,7 +246,7 @@ def fetchOneDailyBasic(sess, ts_code, list_date):
         sess.commit()
 
 
-def calc_median_close():
+def calc_median_mean():
     with session_scope() as session:
         ds = session.query(DailyStats).order_by(DailyStats.date.desc()).first()
         if ds is not None:
@@ -298,9 +298,9 @@ def calc_median_close():
                         ds = DailyStats(date=close_d)
                     if not np.isnan(median[col]) and median[col] > 0.1:
                         ds.median_close = median[col]
-                    if not np.isnan(mean_pettm[col]) and mean_pettm[col] > 1;
+                    if not np.isnan(mean_pettm[col]) and mean_pettm[col] > 1:
                         ds.mean_pettm = mean_pettm[col]
-                    if not np.isnan(mean_pb[col]) and mean_pb[col] > 0.1;
+                    if not np.isnan(mean_pb[col]) and mean_pb[col] > 0.1:
                         ds.mean_pb = mean_pb[col]
                     session.add(ds)
                 session.commit()
@@ -328,7 +328,7 @@ def main():
         fetchAndSaveTradeCal()
         updateStockListStatus()
     fetchAndSaveTradeDaily()
-    calc_median_close()
+    calc_median_mean()
     plot_median_close()
 
 if __name__ == '__main__':
