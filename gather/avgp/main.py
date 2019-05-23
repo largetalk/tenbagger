@@ -231,7 +231,10 @@ def fetchOneDailyBasic(sess, ts_code, list_date):
                 else:
                     mflag = True
                     item = oneDF.iloc[0]
-                    pettm.append('%.2f' % item.pe_ttm if item.pe_ttm is not None else '-')
+                    if item.pe_ttm is None or np.isnan(item.pe_ttm):
+                        pettm.append('-')
+                    else:
+                        pettm.append('%.2f' % item.pe_ttm)
                     pb.append('%.2f' % item.pb if item.pb is not None else '-')
                     totalmv.append(str(int(item.total_mv)))
             if mflag:
@@ -275,10 +278,12 @@ def calc_median_mean():
                 for tradeDaily in session.query(TradeDaily).filter_by(date=d):
                     prices = [ float(x) if x != '-' else np.nan for x in tradeDaily.closes.split(',') ]
                     month_closes.append(prices)
-                    pettm = [ float(x) if x != '-' else np.nan for x in tradeDaily.pettm.split(',') ]
-                    month_pettm.append(pettm)
-                    pb = [ float(x) if x != '-' else np.nan for x in tradeDaily.pb.split(',') ]
-                    month_pb.append(pb)
+                    if tradeDaily.pettm is not None and len(tradeDaily.pettm) > 0:
+                        pettm = [ float(x) if x != '-' else np.nan for x in tradeDaily.pettm.split(',') ]
+                        month_pettm.append(pettm)
+                    if tradeDaily.pb is not None:
+                        pb = [ float(x) if x != '-' else np.nan for x in tradeDaily.pb.split(',') ]
+                        month_pb.append(pb)
                 if len(month_closes) < 1 or len(month_pettm) < 1:
                     print('trade daily %s not found' % d)
                     continue
