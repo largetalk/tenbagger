@@ -93,6 +93,8 @@ class DailyStats(Base):
 
     date = Column(Date, primary_key=True)
     median_close = Column(Float(precision=4), nullable=False)
+    mean_pettm = Column(Float(precision=4), nullable=False)
+    mean_pb = Column(Float(precision=4), nullable=False)
 
 
 def init_db():

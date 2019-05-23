@@ -7,7 +7,7 @@ ts.set_token(tushare_token)
 pro = ts.pro_api()
 #pro = ts.pro_api(tushare_token)
 
-def getStockList():
+def getStockList(list_status=None):
     '''
     input:
         is_hs   str N   是否沪深港通标的，N否 H沪股通 S深股通
@@ -32,6 +32,8 @@ def getStockList():
     '''
     #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
     #return pro.stock_basic(exchange='', list_status='L')
+    if list_status is not None:
+        return pro.stock_basic(list_status=list_status)
     return pro.stock_basic()
 
 def getStockDaily(ts_code, start_date, end_date):

@@ -23,19 +23,36 @@ def fetchAndSaveStockList():
     with session_scope() as session:
         for i in data.index:
             item = data.iloc[i]
-            if session.query(Stock.ts_code).filter_by(ts_code=item['ts_code']).first() is not None:
+            stock = session.query(Stock.ts_code).filter_by(ts_code=item['ts_code']).first()
+            if stock is not None and stock.list_status == 'L':
                 continue
-            date = datetime.strptime(item['list_date'], '%Y%m%d').date()
-            stock = Stock(ts_code=item['ts_code'],
-                         symbol=item['symbol'],
-                         name = item['name'].encode('utf-8'),
-                         area = item['area'].encode('utf-8'),
-                         industry = item['industry'].encode('utf-8'),
-                         market = item['market'],
-                         list_status='L',
-                         list_date=date)
+            if stock is not None:
+                stock.list_status = 'L'
+            else:
+                date = datetime.strptime(item['list_date'], '%Y%m%d').date()
+                stock = Stock(ts_code=item['ts_code'],
+                             symbol=item['symbol'],
+                             name = item['name'].encode('utf-8'),
+                             area = item['area'].encode('utf-8'),
+                             industry = item['industry'].encode('utf-8'),
+                             market = item['market'],
+                             list_status='L',
+                             list_date=date)
             session.add(stock)
             print('add stock %s' % item['name'].encode('utf-8'))
+
+def updateStockListStatus():
+    data = getStockList(list_status='D')
+    with session_scope() as session:
+        for i in data.index:
+            item = data.iloc[i]
+            stock = session.query(Stock.ts_code).filter_by(ts_code=item['ts_code']).first()
+            if stock is None or stock.list_status == 'D':
+                continue
+            stock.list_status = 'D'
+            session.add(stock)
+            print('update stock %s list_status to D' % item['name'].encode('utf-8'))
+
 
 
 def fetchAndSaveTradeCal():
@@ -214,8 +231,8 @@ def fetchOneDailyBasic(sess, ts_code, list_date):
                 else:
                     mflag = True
                     item = oneDF.iloc[0]
-                    pettm.append('%.2f' % item.pe_ttm)
-                    pb.append('%.2f' % item.pb)
+                    pettm.append('%.2f' % item.pe_ttm if item.pe_ttm is not None else '-')
+                    pb.append('%.2f' % item.pb if item.pb is not None else '-')
                     totalmv.append(str(int(item.total_mv)))
             if mflag:
                 tradeDaily = sess.query(TradeDaily).filter_by(ts_code=ts_code, date=date).first()
@@ -253,23 +270,38 @@ def calc_median_close():
                     print("trade cal %s not found" % d)
                     continue
                 month_closes = []
+                month_pettm = []
+                month_pb = []
                 for tradeDaily in session.query(TradeDaily).filter_by(date=d):
                     prices = [ float(x) if x != '-' else np.nan for x in tradeDaily.closes.split(',') ]
                     month_closes.append(prices)
-                if len(month_closes) < 1:
+                    pettm = [ float(x) if x != '-' else np.nan for x in tradeDaily.pettm.split(',') ]
+                    month_pettm.append(pettm)
+                    pb = [ float(x) if x != '-' else np.nan for x in tradeDaily.pb.split(',') ]
+                    month_pb.append(pb)
+                if len(month_closes) < 1 or len(month_pettm) < 1:
                     print('trade daily %s not found' % d)
                     continue
                 df  = pd.DataFrame(np.array(month_closes), columns=tradeCal.getCals())
                 median = df.median()
+                df_pettm  = pd.DataFrame(np.array(month_pettm), columns=tradeCal.getCals())
+                mean_pettm = df_pettm.mean()
+                df_pb  = pd.DataFrame(np.array(month_pb), columns=tradeCal.getCals())
+                mean_pb = df_pb.mean()
                 for col in tradeCal.getCals():
                     close_d = datetime(year, m, int(col)).date()
-                    if np.isnan(median[col]) or median[col] < 0.01:
-                        print('median %s is unexists' % close_d)
-                        continue
+                    #if np.isnan(median[col]) or median[col] < 0.01:
+                    #    print('median %s is unexists' % close_d)
+                    #    continue
                     ds = session.query(DailyStats).filter_by(date=close_d).first()
                     if ds is None:
                         ds = DailyStats(date=close_d)
-                    ds.median_close = median[col]
+                    if not np.isnan(median[col]) and median[col] > 0.1:
+                        ds.median_close = median[col]
+                    if not np.isnan(mean_pettm[col]) and mean_pettm[col] > 1;
+                        ds.mean_pettm = mean_pettm[col]
+                    if not np.isnan(mean_pb[col]) and mean_pb[col] > 0.1;
+                        ds.mean_pb = mean_pb[col]
                     session.add(ds)
                 session.commit()
 
@@ -294,6 +326,7 @@ def main():
     if today.day == 1:
         fetchAndSaveStockList()
         fetchAndSaveTradeCal()
+        updateStockListStatus()
     fetchAndSaveTradeDaily()
     calc_median_close()
     plot_median_close()
