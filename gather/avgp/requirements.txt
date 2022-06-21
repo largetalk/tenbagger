@@ -1,5 +1,5 @@
 lxml==4.2.5
-numpy==1.12.1
+numpy==1.22.0
 panda==0.3.1
 pandas==0.19.2
 tushare==1.2.15
